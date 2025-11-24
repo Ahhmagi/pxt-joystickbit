@@ -63,8 +63,8 @@ namespace joystickbit {
 
     let cb_arr: Action[] = [null, null, null, null, null, null, null, null];
     let button_firstflag = false;
-    let flag = false;
     let btn_scantime_value = 2;
+    let index_ = 0;
     let btn_Scantime: number[] = [btn_scantime_value, btn_scantime_value, btn_scantime_value, btn_scantime_value];
 
 
@@ -139,22 +139,23 @@ namespace joystickbit {
                     for (let i = 0; i < ButtonBt.button_num - 1; i++) {//判断是否按下，共4个按键0~3,循环中轮询判断按键状态，按下：使得按键计次(btn_Scantime)-1 跳出，下次进入则计次再-1，直到计次==0，则执行回调  else(没按)：跳出
                         // if (cb_arr[1] != null) {
 
+                        index_ = i;
                         //判断按键是否按下
                         if (getButton(ButtonPinArr[i])) {
                             if (!(--btn_Scantime[i])) {
                                 if (cb_arr[i * 2 + 1] != null) {
                                     control.inBackground(function () {
-                                        cb_arr[i * 2 + 1]();
-                                        btn_Scantime[i] = btn_scantime_value;
+                                        cb_arr[index_ * 2 + 1]();
+                                        btn_Scantime[index_] = btn_scantime_value;
                                     })
                                 }
                                 control.inBackground(function () {
                                     //松开
-                                    while (getButton(ButtonPinArr[i])) {
+                                    while (getButton(ButtonPinArr[index_])) {
                                     }
-                                    if (cb_arr[i * 2 + 0] != null) {
+                                    if (cb_arr[index_ * 2 + 0] != null) {
                                         {
-                                            cb_arr[i * 2 + 0]();
+                                            cb_arr[index_ * 2 + 0]();
                                         }
                                         return;
                                     }

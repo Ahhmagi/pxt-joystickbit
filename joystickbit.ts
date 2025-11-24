@@ -90,7 +90,7 @@ namespace joystickbit {
         //这里的index为函数事件下标，我的event只有按下和未按下状态，所以button处乘以2，此时cb_arr数组会注册进去进入onbuttonevent函数的参数的按键和事件，cb_arr的对应位就被赋值(注册)了
         let index = 0;
         switch (button) {
-            case P12:
+            case JoystickBitPin.P12:
                 if (event == ButtonType.down) {
                     index = 0*2 + ButtonBt.P_12;
                 }
@@ -98,7 +98,7 @@ namespace joystickbit {
                     index = 0*2 + ButtonBt.P_12 + 1;
                 }
                 break;
-            case P13:
+            case JoystickBitPin.P13:
                 if (event == ButtonType.down) {
                     index = 1*2 + ButtonBt.P_13;
                 }
@@ -106,7 +106,7 @@ namespace joystickbit {
                     index = 1*2 + ButtonBt.P_13 + 1;
                 }
                 break;
-            case P14:
+            case JoystickBitPin.P14:
                 if (event == ButtonType.down) {
                     index = 2*2 + ButtonBt.P_14;
                 }
@@ -114,7 +114,7 @@ namespace joystickbit {
                     index = 2*2 + ButtonBt.P_14 + 1;
                 }
                 break;
-            case P15:
+            case JoystickBitPin.P15:
                 if (event == ButtonType.down) {
                     index = 3*2 + ButtonBt.P_15;
                 }

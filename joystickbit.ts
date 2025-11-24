@@ -10,7 +10,7 @@
 //% weight=0 color=#0fbc11  icon="\uf11b" block="Joystickbit"
 namespace joystickbit {
 
-    let button_firstflag = 0;
+
 
     export enum JoystickBitPin {
         //% block="C"
@@ -59,25 +59,27 @@ namespace joystickbit {
         return (pins.digitalReadPin(<number>button) == 0 ? true : false)
     }
 
-    let flag = false;
-    const BTN_COUNT = 4;
-    const DEBOUNCE_TIME = 20; // ms
-    const SCAN_INTERVAL = 10; // ms
-    let debounce_counter: number[] = [0, 0, 0, 0]; // 消抖计时器
-    let pressed_state: boolean[] = [false, false, false, false]; // 是否已触发（防重复）
 
 
     let cb_arr: Action[] = [null, null, null, null, null, null, null, null];
-
-    let btn_scantime_value = 20;
+    let button_firstflag = false;
+    let flag = false;
+    let btn_scantime_value = 2;
     let btn_Scantime: number[] = [btn_scantime_value, btn_scantime_value, btn_scantime_value, btn_scantime_value];
 
-    const BUTTON_PINS: JoystickBitPin[] = [
-        JoystickBitPin.P12,
-        JoystickBitPin.P13,
-        JoystickBitPin.P14,
-        JoystickBitPin.P15
-    ];
+
+    export enum ButtonBt {
+        P_12,
+        P_13,
+        P_14,
+        P_15,
+        button_num
+    }
+
+    //创建一个数组，把JoystickBitPin枚举中所有的pin放进去
+    let ButtonPinArr: number[] = [DAL.MICROBIT_ID_IO_P12, DAL.MICROBIT_ID_IO_P13, DAL.MICROBIT_ID_IO_P14, DAL.MICROBIT_ID_IO_P15];
+
+
 
     /**
     * Registers code to run when a joystick:bit event is detected.
@@ -85,76 +87,72 @@ namespace joystickbit {
     //% blockId=onButtonEvent block="on button %button|is %event" blockExternalInputs=false
     export function onButtonEvent(button: JoystickBitPin, event: ButtonType, handler: Action): void {
 
-        if (event !== ButtonType.down) {
-            return;
-        }
-        let btnIndex = -1;
-        for (let i = 0; i < BTN_COUNT; i++) {
-            if (BUTTON_PINS[i] === button) {
-                btnIndex = i;
+        //这里的index为函数事件下标，我的event只有按下和未按下状态，所以button处乘以2，此时cb_arr数组会注册进去进入onbuttonevent函数的参数的按键和事件，cb_arr的对应位就被赋值(注册)了
+        let index = 0;
+        switch (button) {
+            case P12:
+                if (event == ButtonType.down) {
+                    index = 0*2 + ButtonBt.P_12;
+                }
+                else {
+                    index = 0*2 + ButtonBt.P_12 + 1;
+                }
                 break;
-            }
+            case P13:
+                if (event == ButtonType.down) {
+                    index = 1*2 + ButtonBt.P_13;
+                }
+                else {
+                    index = 1*2 + ButtonBt.P_13 + 1;
+                }
+                break;
+            case P14:
+                if (event == ButtonType.down) {
+                    index = 2*2 + ButtonBt.P_14;
+                }
+                else {
+                    index = 2*2 + ButtonBt.P_14 + 1;
+                }
+                break;
+            case P15:
+                if (event == ButtonType.down) {
+                    index = 3*2 + ButtonBt.P_15;
+                }
+                else {
+                    index = 3*2 + ButtonBt.P_15 + 1;
+                }
+                break;
         }
-        if (btnIndex === -1) return;
-
-        // 注册回调
-        cb_arr[btnIndex] = handler;
-
-
-        // let index = (button * 4 + event)
-        // cb_arr[index] = handler;
-        if (!flag) {
-            flag = true;
+        // let index = (button * 2 + event);
+        cb_arr[index] = handler;
+        if (!button_firstflag) {
+            button_firstflag = true;
             control.inBackground(function () {
-                // 后台处理按键状态更新 1. 获取已注册的按键状态 2. 定时扫描按键状态变化 3. 触发事件处理程序
-                // while(true){
+                while (true) {
 
-                // }
-                //循环判断按键是否按下--已按下则根据是否注册 决定是否触发callback 2. 触发事件处理程序
-                for (let i = 0; i < BTN_COUNT; i++) {//判断是否按下，共4个按键0~3,循环中轮询判断按键状态，按下：使得按键计次(btn_Scantime)-1 跳出，下次进入则计次再-1，直到计次==0，则执行回调  else(没按)：跳出
-                    // if (cb_arr[1] != null) {
-                    let isPressed = getButton(BUTTON_PINS[i]); // true = 按下
+                    //1. 判断所有按键状态，是否是按下
 
+                    // 后台处理按键状态更新 1. 获取已注册的按键状态 2. 定时扫描按键状态变化 3. 触发事件处理程序
 
-                    if (isPressed) {
-                        //消抖
-                        if (debounce_counter[i] > 0) {
-                            debounce_counter[i]--;
-                            if (debounce_counter[i] === 0) {
-                                //完成消抖，且仍然是按下状态
-                                if (!pressed_state[i] && cb_arr[i]) {
-                                    pressed_state[i] = true;
-                                    cb_arr[i]();
+                    //循环判断按键是否按下--已按下则根据是否注册 决定是否触发callback 2. 触发事件处理程序
+                    for (let i = 0; i < ButtonBt.button_num - 1; i++) {//判断是否按下，共4个按键0~3,循环中轮询判断按键状态，按下：使得按键计次(btn_Scantime)-1 跳出，下次进入则计次再-1，直到计次==0，则执行回调  else(没按)：跳出
+                        // if (cb_arr[1] != null) {
 
+                        //判断按键是否按下
+                        if (getButton(ButtonPinArr[i])) {
+                            if (!(--btn_Scantime[i])) {
+                                if (cb_arr[index] != null) {
+                                    cb_arr[index]();
+                                    btn_Scantime[i] = btn_scantime_value;
                                 }
-
                             }
-                        } else if (!pressed_state[i]) {
-                            debounce_counter[i] = DEBOUNCE_TIME / SCAN_INTERVAL;
+                        } else {
+                            btn_Scantime[i] = btn_scantime_value;
                         }
-                    } else {
-                        //按键已释放(未按下)，重置状态
-                        pressed_state[i] = false;
-                        debounce_counter[i] = 0;
 
                     }
-                    //判断按键是否按下
-                    // if (getButton(JoystickBitPin.P12+i)) {
-                    //     if (--btn_Scantime[i]) {
-                    //         pins.onPulsed(<number>button, <number>event, handler);
-                    //         btn_Scantime[i] = btn_scantime_value;
-                    //     }else{
-                    //         btn_Scantime[i] = btn_scantime_value;
-                    //     }
-
-                    // }
-
-                    // cb_arr[1]()
-                    // }
+                    basic.pause(10);
                 }
-
-
-
             })
         }
 

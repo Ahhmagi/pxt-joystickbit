@@ -144,22 +144,19 @@ namespace joystickbit {
                         if (getButton(ButtonPinArr[i])) {
                             if (!(--btn_Scantime[i])) {
                                 if (cb_arr[i * 2 + 1] != null) {
-                                    control.inBackground(function () {
-                                        cb_arr[index_ * 2 + 1]();
-                                        btn_Scantime[index_] = btn_scantime_value;
-                                    })
+                                    // cb_arr[index_ * 2 + 1]();
+                                    btn_Scantime[index_] = btn_scantime_value;
+                                    pins.onPulsed(ButtonPinArr[i], ButtonType.down, cb_arr[index_ * 2 + 1]);
                                 }
-                                control.inBackground(function () {
-                                    //松开
-                                    while (getButton(ButtonPinArr[index_])) {
+                                //松开
+                                while (getButton(ButtonPinArr[index_])) {
+                                }
+                                if (cb_arr[index_ * 2 + 0] != null) {
+                                    {
+                                        cb_arr[index_ * 2 + 0]();
                                     }
-                                    if (cb_arr[index_ * 2 + 0] != null) {
-                                        {
-                                            cb_arr[index_ * 2 + 0]();
-                                        }
-                                        return;
-                                    }
-                                })
+                                    return;
+                                }
 
                             } else {
                                 btn_Scantime[i] = btn_scantime_value;

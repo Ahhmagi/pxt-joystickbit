@@ -138,8 +138,6 @@ namespace joystickbit {
                     //循环判断按键是否按下--已按下则根据是否注册 决定是否触发callback 2. 触发事件处理程序
                     for (let i = 0; i < ButtonBt.button_num - 1; i++) {//判断是否按下，共4个按键0~3,循环中轮询判断按键状态，按下：使得按键计次(btn_Scantime)-1 跳出，下次进入则计次再-1，直到计次==0，则执行回调  else(没按)：跳出
                         // if (cb_arr[1] != null) {
-
-
                         //判断按键是否按下
                         if (getButton(ButtonPinArr[i])) {
                             if (!(--btn_Scantime[i])) {
@@ -148,23 +146,12 @@ namespace joystickbit {
                                     btn_Scantime[i] = btn_scantime_value;
                                     // pins.onPulsed(ButtonPinArr[i], PulseValue.High, cb_arr[i * 2 + 1]);
                                 }
-                                //松开
-                                // while (getButton(ButtonPinArr[i])) {
-                                // }
-                                // if (cb_arr[i * 2 + 0] != null) {
-                                //     {
-                                //         cb_arr[i * 2 + 0]();
-                                //     }
-                                //     return;
-                                // }
-
-                            } else {
-                                btn_Scantime[i] = btn_scantime_value;
                             }
-
+                        } else {
+                            btn_Scantime[i] = btn_scantime_value;
                         }
-                        basic.pause(10);
                     }
+                    basic.pause(10);
                 }
             })
         }

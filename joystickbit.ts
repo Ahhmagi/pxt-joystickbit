@@ -124,7 +124,7 @@ namespace joystickbit {
                 break;
         }
         // let index = (button * 2 + event);/
-        
+
         cb_arr[index] = handler;
         if (!button_firstflag) {
             button_firstflag = true;
@@ -143,18 +143,33 @@ namespace joystickbit {
                         if (getButton(ButtonPinArr[i])) {
                             if (!(--btn_Scantime[i])) {
                                 if (cb_arr[i * 2 + 1] != null) {
-                                    cb_arr[i * 2 + 1]();
-                                    btn_Scantime[i] = btn_scantime_value;
+                                    control.inBackground(function () {
+                                        cb_arr[i * 2 + 1]();
+                                        btn_Scantime[i] = btn_scantime_value;
+                                })
                                 }
-                            }
-                        } else {
-                            btn_Scantime[i] = btn_scantime_value;
-                        }
+                                control.inBackground(function () {
+                                    //松开
+                                    while (getButton(ButtonPinArr[i])) {
+                                    }
+                                    if (cb_arr[i * 2 + 0] != null) {
+                                        {
+                                            cb_arr[i * 2 + 0]();
+                                        }
+                                        return;
+                                    }
+                                })
 
+                            } else {
+                                btn_Scantime[i] = btn_scantime_value;
+                            }
+
+                        }
+                        basic.pause(10);
                     }
-                    basic.pause(10);
-                }
-            })
+                })
+
+            }
         }
 
 

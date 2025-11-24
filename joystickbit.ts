@@ -91,7 +91,7 @@ namespace joystickbit {
         let index = 0;
         switch (button) {
             case JoystickBitPin.P12:
-                if (event == ButtonType.down) {
+                if (event == ButtonType.up) {
                     index = 0 * 2 + 0;
                 }
                 else {
@@ -99,7 +99,7 @@ namespace joystickbit {
                 }
                 break;
             case JoystickBitPin.P13:
-                if (event == ButtonType.down) {
+                if (event == ButtonType.up) {
                     index = 1 * 2 + 0;
                 }
                 else {
@@ -107,7 +107,7 @@ namespace joystickbit {
                 }
                 break;
             case JoystickBitPin.P14:
-                if (event == ButtonType.down) {
+                if (event == ButtonType.up) {
                     index = 2 * 2 + 0;
                 }
                 else {
@@ -115,7 +115,7 @@ namespace joystickbit {
                 }
                 break;
             case JoystickBitPin.P15:
-                if (event == ButtonType.down) {
+                if (event == ButtonType.up) {
                     index = 3 * 2 + 0;
                 }
                 else {
